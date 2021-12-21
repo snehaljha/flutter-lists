@@ -32,4 +32,10 @@ class AppDatabase extends _$AppDatabase {
       (delete(tasks)..where((task) => task.title.equals(title))).go();
 
   Future<int> deleteTask(Task task) => delete(tasks).delete(task);
+
+  Future<int> renameTitle(String oldTitle, String newTitle) {
+    return customUpdate(
+        "UPDATE tasks set t.title = '$newTitle' where t.title = '$oldTitle",
+        updates: {tasks});
+  }
 }
