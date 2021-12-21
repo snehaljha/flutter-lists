@@ -3,6 +3,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:moor_lists/db/app_database.dart';
 import 'package:moor_lists/theme/app_theme.dart';
 import 'package:moor_lists/views/dialogs.dart';
+import 'package:moor_lists/views/tasks_page.dart';
 
 class MainPage extends StatefulWidget {
   const MainPage({Key? key}) : super(key: key);
@@ -61,10 +62,15 @@ class _MainPageState extends State<MainPage> {
                   child: Card(
                       child: ListTile(
                     leading: CircleAvatar(
-                      child: Text('${index + 1}'),
+                      child: Text(
+                        '${index + 1}',
+                      ),
                       radius: 20,
                     ),
-                    title: Text(snapshot.data![index]!),
+                    title: Text(
+                      snapshot.data![index]!,
+                      style: TextStyle(color: AppTheme.colors.listTitlesColor),
+                    ),
                     trailing: IconButton(
                       icon: Icon(Icons.delete_outline),
                       onPressed: () {
@@ -100,6 +106,12 @@ class _MainPageState extends State<MainPage> {
           return;
         }
 
+        if (isNew) {
+          Navigator.of(ct)
+              .push(MaterialPageRoute(builder: (ct) => TasksPage(title: res)));
+        }
+
+        AppDatabase().renameTitle(origName, res);
         //enter new Screen;
       });
     });
