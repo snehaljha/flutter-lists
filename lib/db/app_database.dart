@@ -38,4 +38,6 @@ class AppDatabase extends _$AppDatabase {
         "UPDATE tasks set t.title = '$newTitle' where t.title = '$oldTitle",
         updates: {tasks});
   }
+
+  Future<bool> changeDone(Task task) => update(tasks).replace(task);
 }
