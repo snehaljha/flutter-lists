@@ -21,6 +21,10 @@ class AppColors {
   Color tasksTextColor = Colors.black;
   Color tasksBGColor = Colors.white;
 
+  //dialogs
+  Color dialogBG = Colors.white;
+  Color dialogText = Colors.black;
+
   AppColors() {
     var brightness = SchedulerBinding.instance!.window.platformBrightness;
     bool isDark = brightness == Brightness.dark;
@@ -41,6 +45,10 @@ class AppColors {
       textAdderButtonText = Colors.black;
       tasksTextColor = Colors.white70;
       tasksBGColor = Colors.white24;
+
+      //dialogs
+      dialogBG = Colors.white24;
+      dialogText = Colors.white;
     }
   }
 }

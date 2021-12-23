@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/widgets.dart';
+import 'package:moor_lists/theme/app_theme.dart';
 
 class Dialogs {
   static Future<dynamic> createOrRenameListDialog(bool isNew, BuildContext ct) {
@@ -11,8 +12,13 @@ class Dialogs {
         context: ct,
         builder: (ct) {
           return AlertDialog(
-            title: const Text("List Name"),
+            backgroundColor: AppTheme.colors.dialogBG,
+            title: Text(
+              "List Name",
+              style: TextStyle(color: AppTheme.colors.dialogText),
+            ),
             content: TextField(
+              style: TextStyle(color: AppTheme.colors.dialogText),
               controller: tfController,
             ),
             actions: [
@@ -31,8 +37,15 @@ class Dialogs {
         context: ct,
         builder: (ct) {
           return AlertDialog(
-            title: const Text("Delete"),
-            content: const Text("(('_')) Are you sure about that?"),
+            backgroundColor: AppTheme.colors.dialogBG,
+            title: Text(
+              "Delete",
+              style: TextStyle(color: AppTheme.colors.dialogText),
+            ),
+            content: Text(
+              "(('_')) Are you sure about that?",
+              style: TextStyle(color: AppTheme.colors.dialogText),
+            ),
             actions: [
               TextButton(
                   onPressed: () {

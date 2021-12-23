@@ -94,7 +94,7 @@ class _MainPageState extends State<MainPage> {
   }
 
   _createOrRename(BuildContext ct, bool isNew, String origName) {
-    Dialogs.createOrRenameListDialog(true, ct).then((value) {
+    Dialogs.createOrRenameListDialog(isNew, ct).then((value) {
       if (value == null) return;
       String res = value.toString();
       if (res.trim() == '') {
