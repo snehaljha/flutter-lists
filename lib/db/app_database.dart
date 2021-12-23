@@ -8,6 +8,7 @@ class AppDatabase extends _$AppDatabase {
   AppDatabase()
       : super(FlutterQueryExecutor.inDatabaseFolder(
             path: 'moorList.sqlite', logStatements: true));
+  @override
   int get schemaVersion => 1;
 
   Future<List<String?>> getTitles() {
@@ -35,7 +36,7 @@ class AppDatabase extends _$AppDatabase {
 
   Future<int> renameTitle(String oldTitle, String newTitle) {
     return customUpdate(
-        "UPDATE tasks set t.title = '$newTitle' where t.title = '$oldTitle",
+        "UPDATE tasks set title = '$newTitle' where title = '$oldTitle'",
         updates: {tasks});
   }
 
