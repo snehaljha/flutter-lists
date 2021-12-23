@@ -1,18 +1,46 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/scheduler.dart';
 
 @immutable
+// ignore: must_be_immutable
 class AppColors {
-  const AppColors();
   //page components
-  final Color pageTitleText = const Color(0x000000ff);
+  Color pageTitleText = Colors.white;
+  MaterialColor primaryColor = Colors.deepOrange;
+  Color pageBackground = Colors.white70;
 
   //lists component
-  final Color renameActionBackground = const Color(0x888888ff);
-  final Color actionForeground = const Color(0x000000ff);
-  final Color deleteActionBackround = const Color(0xff3333ff);
-  final Color listTitlesColor = Colors.black;
+  Color renameActionBackground = Colors.yellowAccent;
+  Color actionForeground = Colors.black;
+  Color deleteActionBackround = Colors.redAccent;
+  Color listTitlesColor = Colors.black;
+  Color listTitlesBGColor = Colors.white;
 
   //task adding screen
-  final Color textAdderButtonText = Colors.black;
-  final Color tasksTextColor = Colors.black;
+  Color textAdderButtonText = Colors.white;
+  Color tasksTextColor = Colors.black;
+  Color tasksBGColor = Colors.white;
+
+  AppColors() {
+    var brightness = SchedulerBinding.instance!.window.platformBrightness;
+    bool isDark = brightness == Brightness.dark;
+    if (isDark) {
+      //page components
+      pageTitleText = Colors.black;
+      primaryColor = Colors.deepOrange;
+      pageBackground = Colors.black;
+
+      //lists component
+      renameActionBackground = Colors.yellowAccent;
+      actionForeground = Colors.black;
+      deleteActionBackround = Colors.redAccent;
+      listTitlesColor = Colors.white70;
+      listTitlesBGColor = Colors.white24;
+
+      //task adding screen
+      textAdderButtonText = Colors.black;
+      tasksTextColor = Colors.white70;
+      tasksBGColor = Colors.white24;
+    }
+  }
 }
