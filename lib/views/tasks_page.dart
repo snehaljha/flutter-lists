@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:moor_lists/db/app_database.dart';
 import 'package:moor_lists/theme/app_theme.dart';
+import 'package:share_plus/share_plus.dart';
 
 class TasksPage extends StatefulWidget {
   final String title;
@@ -27,9 +28,24 @@ class _TasksPageState extends State<TasksPage> {
         iconTheme: IconThemeData(
           color: AppTheme.colors.pageTitleText,
         ),
-        title: Text(
-          _title,
-          style: TextStyle(color: AppTheme.colors.pageTitleText),
+        title: Row(
+          children: [
+            Expanded(
+              child: Text(
+                _title,
+                style: TextStyle(color: AppTheme.colors.pageTitleText),
+              ),
+            ),
+            InkWell(
+              onTap: () {
+                _shareList(context);
+              },
+              child: Icon(
+                Icons.share,
+                color: AppTheme.colors.pageTitleText,
+              ),
+            )
+          ],
         ),
       ),
       backgroundColor: AppTheme.colors.pageBackground,
@@ -134,5 +150,21 @@ class _TasksPageState extends State<TasksPage> {
     if (text == '') return;
     AppDatabase().addTask(Task(title: _title, item: text, isDone: false));
     setState(() {});
+  }
+
+  _shareList(BuildContext ct) async {
+    String text = await _parseTasks();
+    if (text != '') Share.share(text);
+  }
+
+  Future<String> _parseTasks() async {
+    String res = '';
+    List<Task> tasks = await AppDatabase().getTasks(_title);
+    if (tasks.isEmpty) return res;
+    res = _title + ' :-';
+    for (Task task in tasks) {
+      res += '\n ${task.item}';
+    }
+    return res;
   }
 }
