@@ -9,6 +9,7 @@ class TasksPage extends StatefulWidget {
   const TasksPage({Key? key, required this.title}) : super(key: key);
 
   @override
+  // ignore: no_logic_in_create_state
   _TasksPageState createState() => _TasksPageState(title);
 }
 
@@ -21,24 +22,37 @@ class _TasksPageState extends State<TasksPage> {
   Widget build(BuildContext context) {
     TextEditingController tfController = TextEditingController();
 
-    return Container(
-      child: Column(
+    return Scaffold(
+      appBar: AppBar(
+        iconTheme: IconThemeData(
+          color: AppTheme.colors.pageTitleText,
+        ),
+        title: Text(
+          _title,
+          style: TextStyle(color: AppTheme.colors.pageTitleText),
+        ),
+      ),
+      backgroundColor: AppTheme.colors.pageBackground,
+      body: Column(
         children: [
           Expanded(
             child: StreamBuilder(
               stream: AppDatabase().watchTasks(_title),
               builder: (context, AsyncSnapshot<List<Task>> snapshot) {
-                if (!snapshot.hasData)
-                  return Center(
-                    child: Text("No Data found"),
+                if (!snapshot.hasData) {
+                  return const Expanded(
+                    child: Center(
+                      child: Text("No Data found"),
+                    ),
                   );
+                }
 
                 return ListView.builder(
                   itemCount: snapshot.data?.length,
                   itemBuilder: (_, index) {
                     return Slidable(
                       endActionPane:
-                          ActionPane(motion: ScrollMotion(), children: [
+                          ActionPane(motion: const ScrollMotion(), children: [
                         SlidableAction(
                           backgroundColor:
                               AppTheme.colors.deleteActionBackround,
@@ -51,20 +65,18 @@ class _TasksPageState extends State<TasksPage> {
                         )
                       ]),
                       child: Card(
-                        child: InkWell(
+                        color: AppTheme.colors.tasksBGColor,
+                        child: ListTile(
                           onTap: () {
                             _changeDoneState(context, snapshot.data![index]);
                           },
-                          child: Container(
-                            padding: AppTheme.spacing.taskCardPadding,
-                            child: Text(
-                              snapshot.data![index].item,
-                              style: TextStyle(
-                                  color: AppTheme.colors.tasksTextColor,
-                                  decoration: snapshot.data![index].isDone
-                                      ? TextDecoration.lineThrough
-                                      : TextDecoration.none),
-                            ),
+                          title: Text(
+                            snapshot.data![index].item,
+                            style: TextStyle(
+                                color: AppTheme.colors.tasksTextColor,
+                                decoration: snapshot.data![index].isDone
+                                    ? TextDecoration.lineThrough
+                                    : TextDecoration.none),
                           ),
                         ),
                       ),
@@ -74,20 +86,32 @@ class _TasksPageState extends State<TasksPage> {
               },
             ),
           ),
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: tfController,
+          Container(
+            margin: AppTheme.spacing.textBoxMargin,
+            child: Row(
+              children: [
+                Expanded(
+                  child: TextField(
+                    style: TextStyle(color: AppTheme.colors.tasksTextColor),
+                    controller: tfController,
+                  ),
                 ),
-              ),
-              TextButton(
-                  onPressed:
-                      _addTask(context, tfController.text.toString().trim()),
-                  child: Text("+",
-                      style: TextStyle(
-                          color: AppTheme.colors.textAdderButtonText)))
-            ],
+                Container(
+                  decoration: BoxDecoration(
+                      color: AppTheme.colors.primaryColor,
+                      borderRadius:
+                          const BorderRadius.all(Radius.circular(30.0))),
+                  child: TextButton(
+                      onPressed: () {
+                        _addTask(context, tfController.text.toString().trim());
+                      },
+                      child: Text("+",
+                          style: TextStyle(
+                              fontSize: 28,
+                              color: AppTheme.colors.textAdderButtonText))),
+                )
+              ],
+            ),
           )
         ],
       ),
@@ -96,15 +120,19 @@ class _TasksPageState extends State<TasksPage> {
 
   _delete(BuildContext ct, Task task) {
     AppDatabase().deleteTask(task);
+    setState(() {});
   }
 
   _changeDoneState(BuildContext ct, Task task) {
     Task newTask =
         Task(title: task.title, item: task.item, isDone: !task.isDone);
     AppDatabase().changeDone(newTask);
+    setState(() {});
   }
 
   _addTask(BuildContext ct, String text) {
+    if (text == '') return;
     AppDatabase().addTask(Task(title: _title, item: text, isDone: false));
+    setState(() {});
   }
 }

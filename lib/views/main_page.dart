@@ -23,11 +23,15 @@ class _MainPageState extends State<MainPage> {
         ),
       ),
       floatingActionButton: FloatingActionButton(
-        child: Icon(Icons.add),
+        child: Icon(
+          Icons.add,
+          color: AppTheme.colors.pageTitleText,
+        ),
         onPressed: () {
           _createOrRename(context, true, "");
         },
       ),
+      backgroundColor: AppTheme.colors.pageBackground,
       body: Container(
         child: StreamBuilder(
           stream: AppDatabase().watchTitles(),
@@ -60,26 +64,25 @@ class _MainPageState extends State<MainPage> {
                     )
                   ]),
                   child: Card(
+                      color: AppTheme.colors.listTitlesBGColor,
                       child: ListTile(
-                    leading: CircleAvatar(
-                      child: Text(
-                        '${index + 1}',
-                      ),
-                      radius: 20,
-                    ),
-                    title: Text(
-                      snapshot.data![index]!,
-                      style: TextStyle(color: AppTheme.colors.listTitlesColor),
-                    ),
-                    trailing: IconButton(
-                      icon: Icon(Icons.delete_outline),
-                      onPressed: () {
-                        setState(() {
-                          AppDatabase().deleteTitle(snapshot.data![index]!);
-                        });
-                      },
-                    ),
-                  )),
+                        onTap: () {
+                          Navigator.of(context).push(MaterialPageRoute(
+                              builder: (context) =>
+                                  TasksPage(title: snapshot.data![index]!)));
+                        },
+                        leading: CircleAvatar(
+                          child: Text(
+                            '${index + 1}',
+                          ),
+                          radius: 20,
+                        ),
+                        title: Text(
+                          snapshot.data![index]!,
+                          style:
+                              TextStyle(color: AppTheme.colors.listTitlesColor),
+                        ),
+                      )),
                 );
               },
               itemCount: snapshot.data?.length,
@@ -92,14 +95,15 @@ class _MainPageState extends State<MainPage> {
 
   _createOrRename(BuildContext ct, bool isNew, String origName) {
     Dialogs.createOrRenameListDialog(true, ct).then((value) {
+      if (value == null) return;
       String res = value.toString();
       if (res.trim() == '') {
         SnackBar sb = SnackBar(content: Text("List Name can't be $res"));
         ScaffoldMessenger.of(ct).showSnackBar(sb);
         return;
       }
-      AppDatabase().getTasks(res).then((value) {
-        List<Task> val = value as List<Task>;
+      AppDatabase().getTasks(res).then((value) async {
+        List<Task> val = value;
         if (val.isNotEmpty) {
           SnackBar sb = SnackBar(content: Text("List $res already exists"));
           ScaffoldMessenger.of(ct).showSnackBar(sb);
@@ -107,11 +111,16 @@ class _MainPageState extends State<MainPage> {
         }
 
         if (isNew) {
-          Navigator.of(ct)
-              .push(MaterialPageRoute(builder: (ct) => TasksPage(title: res)));
+          await Navigator.of(ct)
+              .push(MaterialPageRoute(builder: (ct) => TasksPage(title: res)))
+              .then((value) {
+            setState(() {});
+          });
+        } else {
+          AppDatabase().renameTitle(origName, res);
+          setState(() {});
         }
 
-        AppDatabase().renameTitle(origName, res);
         //enter new Screen;
       });
     });
@@ -122,6 +131,7 @@ class _MainPageState extends State<MainPage> {
       if (value == null) return;
       if (value as bool == true) {
         AppDatabase().deleteTitle(listName);
+        setState(() {});
       }
     });
   }
